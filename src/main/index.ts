@@ -1,9 +1,18 @@
-import { app, shell, BrowserWindow} from 'electron'
+import { app, shell, BrowserWindow, ipcMain} from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { loadDatabase, saveDatabase } from './database'
+import { Database } from 'sqlite3'
 
-function createWindow(): void {
+
+let db: Database;
+
+// function createWindow(): void {
+
+async function createWindow(): Promise<void> {
+    // Load the database before creating the window
+    db = await loadDatabase();
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
@@ -70,3 +79,33 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+// Handle IPC messages from renderer process
+
+// Handle IPC messages from renderer process
+ipcMain.handle('db-run-query', async (_, query: string, params: any[]) => {
+  if (!db) {
+    db = await loadDatabase();
+  }
+
+  try {
+    if (query.trim().toUpperCase().startsWith('SELECT')) {
+      const result = db.exec(query);
+      return result; // Return the query results
+    } else {
+      db.run(query, params);
+      await saveDatabase(db)
+
+      return [];
+    }
+  } catch (error) {
+    console.error('Database query error:', error);
+    throw error;
+  }
+});
+
+
+ipcMain.handle('db-save', async () => {
+  if (db) {
+    saveDatabase(db);
+  }
+});
