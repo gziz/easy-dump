@@ -24,6 +24,7 @@ const loadDatabase = async (): Promise<Database> => {
         id TEXT PRIMARY KEY,
         content TEXT,
         tags TEXT,
+        isMarkdown BOOLEAN,
         createdAt TEXT,
         updatedAt TEXT
       );
