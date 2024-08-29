@@ -1,5 +1,5 @@
 // import { saveDatabase } from 'src/main/database'
-import { Note } from './types'
+import { Note } from '../home/types'
 
 export const createNote = async (
   notes: Note[],

@@ -1,6 +1,6 @@
 import { Button, Card, Tag, Divider } from 'antd'
 import { useMemo, useState } from 'react'
-import { useNotes } from './NoteContext'
+import { useNotes } from '../context/NoteContext'
 import { useMarkdownEditor } from './useMarkdownEditor'
 
 import NewNote from './NoteForm'
@@ -33,13 +33,13 @@ const HomeContainer = () => {
           handleCreateNote={handleCreateNote}
         />
         {notes.toReversed().map((note) => (
-          <DisplayedNote key={note.id} note={note} />
+          <DisplayedNote key={note.id} note={note} allTagsFormatted={allTagsFormatted} />
         ))}
       </div>
 
       <div style={{ width: '20%', borderLeft: '1px solid #ddd' }}>
         <div style={{ marginLeft: 10 }}>
-          <Card title="Tags" style={{ marginBottom: 24 }}>
+          <Card title="Tags" style={{ marginBottom: 24, padding: 0 }}>
             <div>
               {tags.map((tag, index) => (
                 <Tag color="blue" key={index}>
@@ -48,12 +48,6 @@ const HomeContainer = () => {
               ))}
             </div>
           </Card>
-          <Divider />
-          <div>
-            <Button type="link">Links 1</Button>
-            <Button type="link">To-do 0/2</Button>
-            <Button type="link">Code 0</Button>
-          </div>
         </div>
       </div>
     </div>

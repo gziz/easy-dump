@@ -53,14 +53,18 @@ app.whenReady().then(async () => {
 
 
   globalShortcut.register("CmdOrCtrl+Shift+D", async () => {
+    console.log("shortcut pressed!")
     const window = BrowserWindow.getAllWindows()[0];
     if (!window) {
+      console.log("no window found!")
       const newWindow = await createWindow();
       newWindow.on('ready-to-show', () => {
+        console.log("ready to show window!")
         newWindow.webContents.send('quick-note');
       })
     } else {
-      window.webContents.send('quick-note');
+      console.log("window found!")
+      window.webContents.send('quick-note')
       window.show();
     }
   })

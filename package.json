@@ -25,7 +25,9 @@
     "@electron-toolkit/utils": "^3.0.0",
     "@mdxeditor/editor": "^3.11.1",
     "antd": "^5.20.2",
+    "react-beautiful-dnd": "^13.1.1",
     "react-router-dom": "^6.26.1",
+    "react-trello": "^2.2.10",
     "sql.js": "^1.11.0"
   },
   "devDependencies": {

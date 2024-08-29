@@ -10,5 +10,10 @@ declare global {
   interface Window {
     // electron: ElectronAPI
     electronAPI: ElectronAPI;
+    process: {
+      env: {
+        NODE_ENV: string;
+      };
+    };
   }
 }

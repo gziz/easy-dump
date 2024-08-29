@@ -1,4 +1,4 @@
-import { NoteProvider } from '../home/NoteContext';
+import { NoteProvider } from '../context/NoteContext';
 import QuickNoteContainer from './container';
 
 const QuickNote = () => (

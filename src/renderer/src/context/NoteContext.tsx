@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createNote, editNote, deleteNote, getNotes } from './noteService';
-import { Note } from './types';
+import { Note } from '../home/types';
 
 type NoteContextType = {
   notes: Note[];

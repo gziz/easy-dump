@@ -1,5 +1,5 @@
 import { Layout, Menu } from 'antd';
-import { HomeOutlined, FileTextOutlined, SettingOutlined, EditOutlined } from '@ant-design/icons';
+import { HomeOutlined, FileTextOutlined, SettingOutlined, EditOutlined, BarChartOutlined} from '@ant-design/icons';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
@@ -26,18 +26,21 @@ const App = () => {
           setSelectedKey(key);
           if (key === '1') navigate('/');
           if (key === '2') navigate('/quick-note');
+          if (key === '3') navigate('/board');
+          if (key === '4') navigate('/editor');
         }}
       >
         <Menu.Item key="1"><HomeOutlined /></Menu.Item>
         <Menu.Item key="2"><EditOutlined /></Menu.Item>
-        <Menu.Item key="3"><FileTextOutlined /></Menu.Item>
-        <Menu.Item key="4"><SettingOutlined /></Menu.Item>
+        <Menu.Item key="3"><BarChartOutlined /></Menu.Item>
+        <Menu.Item key="4"><FileTextOutlined /></Menu.Item>
+        <Menu.Item key="5"><SettingOutlined /></Menu.Item>
       </Menu>
     </Sider>
   );
 
   return (
-    <Layout style={{ minHeight: '97vh' }}>
+    <Layout style={{ minHeight: '95vh' }}>
       <SideMenu />
       <Layout>
         <Content style={{ padding: '24px', display: 'flex', justifyContent: 'space-between' }}>

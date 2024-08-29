@@ -1,15 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Tag } from 'antd'
+import { Tag, Dropdown, message, Select } from 'antd'
 import { useMarkdownEditor } from './useMarkdownEditor'
-import { useNotes } from './NoteContext'
+import { useNotes } from '../context/NoteContext'
 import SimpleMarkdownEditor from './SimpleMarkdownEditor'
 import { Note } from './types'
 
-const NoteBox: React.FC<{ note: Note }> = ({ note }) => {
+const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: string }[] }> = ({
+  note,
+  allTagsFormatted
+}) => {
   const [editedNote, setEditedNote] = useState(note.content)
+  const [newTags, setNewTags] = useState<string[]>(note.tags)
+  const [showSelect, setShowSelect] = useState(false)
   const { editorRef } = useMarkdownEditor()
   const editTimeoutRef = useRef<number | null>(null)
-  const { editNote } = useNotes()
+  const { editNote, deleteNote } = useNotes()
+  const [selectPosition, setSelectPosition] = useState<{ x: number; y: number } | null>(null)
 
   const containerStyle = {
     padding: '0px 4px 16px 4px',
@@ -24,11 +30,10 @@ const NoteBox: React.FC<{ note: Note }> = ({ note }) => {
   }
 
   const savedEditedNote = () => {
-    editNote(note.id, editedNote, note.tags)
+    editNote(note.id, editedNote, newTags)
   }
 
   const handleChange = () => {
-    console.log('handleChange')
     setEditedNote(editorRef.current?.getMarkdown() || '')
 
     if (editTimeoutRef.current !== null) {
@@ -38,6 +43,46 @@ const NoteBox: React.FC<{ note: Note }> = ({ note }) => {
     editTimeoutRef.current = window.setTimeout(() => {
       savedEditedNote()
     }, 1000)
+  }
+
+  const handleDeleteNote = () => {
+    deleteNote(note.id)
+    message.success('Note deleted successfully')
+  }
+
+  const handleUpdateTags = () => {
+    savedEditedNote()
+    message.success('Tags updated successfully')
+    setShowSelect(false) // Hide Select after updating tags
+  }
+
+  const items = [
+    {
+      key: 'delete',
+      label: <span onClick={handleDeleteNote}>Delete Note</span>
+    },
+    {
+      key: 'update-tags',
+      label: <span onClick={() => setShowSelect(true)}>Update Tags</span> // Show Select on click
+    }
+  ]
+
+  const handleMenuClick = (e: any) => {
+    if (e.key === 'update-tags') {
+      const dropdownButton = e.domEvent.target.getBoundingClientRect()
+      setSelectPosition({
+        x: dropdownButton.right,
+        y: dropdownButton.top
+      })
+      setShowSelect(true)
+    } else {
+      setShowSelect(false)
+    }
+  }
+
+  const menuProps = {
+    items,
+    onClick: handleMenuClick
   }
 
   useEffect(() => {
@@ -50,16 +95,48 @@ const NoteBox: React.FC<{ note: Note }> = ({ note }) => {
   }, [note])
 
   return (
-    <div style={containerStyle}>
-      <SimpleMarkdownEditor ref={editorRef} initialMarkdown={editedNote} onChange={handleChange} />
-      <div style={tagContainerStyle}>
-        {note.tags.map((tag) => (
-          <Tag color="blue" key={tag}>
-            {tag}
-          </Tag>
-        ))}
+    <Dropdown menu={menuProps} trigger={['contextMenu']}>
+      <div style={containerStyle} onContextMenu={(e) => e.preventDefault()}>
+        <div style={{ maxHeight: '50vh', overflow: 'auto' }}>
+          <SimpleMarkdownEditor
+            ref={editorRef}
+            initialMarkdown={editedNote}
+            onChange={handleChange}
+          />
+        </div>
+        <div style={tagContainerStyle}>
+          {newTags.map((tag) => (
+            <Tag color="blue" key={tag}>
+              {tag}
+            </Tag>
+          ))}
+        </div>
+        {showSelect && selectPosition && (
+          <div
+            style={{
+              position: 'absolute',
+              top: selectPosition.y,
+              left: selectPosition.x,
+              zIndex: 1000,
+              minWidth: '200px'
+            }}
+          >
+            <Select
+              mode="tags"
+              options={allTagsFormatted}
+              style={{
+                width: '100%',
+                marginTop: '8px'
+              }}
+              onChange={setNewTags}
+              value={newTags}
+              placeholder="Select your tags..."
+              onBlur={handleUpdateTags}
+            />
+          </div>
+        )}
       </div>
-    </div>
+    </Dropdown>
   )
 }
 

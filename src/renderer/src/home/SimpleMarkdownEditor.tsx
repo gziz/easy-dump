@@ -5,8 +5,9 @@ import {
   markdownShortcutPlugin,
   MDXEditor,
   MDXEditorMethods,
+  thematicBreakPlugin,
 } from '@mdxeditor/editor'
-import { forwardRef, useCallback, KeyboardEvent } from 'react'
+import { forwardRef } from 'react'
 
 interface SimpleMarkdownEditorProps {
   initialMarkdown: string;
@@ -14,25 +15,15 @@ interface SimpleMarkdownEditorProps {
   onCreateNote?: () => void;
 }
 
-const SimpleMarkdownEditor = forwardRef<MDXEditorMethods, SimpleMarkdownEditorProps>(({ initialMarkdown, onChange, onCreateNote }, ref) => {
-
-  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
-    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-      event.preventDefault()
-      onCreateNote?.()
-    }
-  }, [onCreateNote])
-
+const SimpleMarkdownEditor = forwardRef<MDXEditorMethods, SimpleMarkdownEditorProps>(({ initialMarkdown, onChange }, ref) => {
   return (
-    <div onKeyDown={handleKeyDown}>
       <MDXEditor
         placeholder="Start typing..."
         markdown={initialMarkdown}
         ref={ref}
-        plugins={[headingsPlugin(), listsPlugin(), markdownShortcutPlugin()]}
+        plugins={[headingsPlugin(), listsPlugin(), markdownShortcutPlugin(), thematicBreakPlugin()]}
         onChange={onChange}
       />
-    </div>
   )
 });
 
