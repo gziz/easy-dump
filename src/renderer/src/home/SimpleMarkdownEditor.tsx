@@ -26,6 +26,7 @@ const SimpleMarkdownEditor = forwardRef<MDXEditorMethods, SimpleMarkdownEditorPr
   return (
     <div onKeyDown={handleKeyDown}>
       <MDXEditor
+        placeholder="Start typing..."
         markdown={initialMarkdown}
         ref={ref}
         plugins={[headingsPlugin(), listsPlugin(), markdownShortcutPlugin()]}

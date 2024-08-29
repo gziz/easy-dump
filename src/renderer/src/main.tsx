@@ -2,16 +2,23 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import QuickNote from './QuickNote';
+import QuickNote from './quickNote';
+import Home from './home';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-  },
-  {
-    path: "quick-note",
-    element: <QuickNote />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "quick-note",
+        element: <QuickNote />,
+      },
+    ],
   },
 ]);
 
