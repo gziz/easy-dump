@@ -16,9 +16,7 @@ const loadDatabase = async (): Promise<Database> => {
     const fileBuffer = fs.readFileSync(dbPath);
     db = new SQL.Database(fileBuffer);
   } else {
-    // Create a new database
     db = new SQL.Database();
-    // Create a notes table
     db.run(`
       CREATE TABLE notes (
         id TEXT PRIMARY KEY,
@@ -35,7 +33,6 @@ const loadDatabase = async (): Promise<Database> => {
   return db;
 };
 
-// Save the database to the file system
 const saveDatabase = (db: Database) => {
   const data = db.export();
   const buffer = Buffer.from(data);

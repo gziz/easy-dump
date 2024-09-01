@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: mynotemark-2
+productName: easy-dump
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: mynotemark-2
+  executableName: easy-dump
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

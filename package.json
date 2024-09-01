@@ -1,10 +1,10 @@
 {
-  "name": "mynotemark-2",
+  "name": "easy-dump",
   "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
+  "description": "A simple and quick brain dump mac os application",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "author": "gerardomz.com",
+  "homepage": "https://tobediscovered.com",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",

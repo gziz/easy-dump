@@ -1,18 +1,18 @@
-import '@mdxeditor/editor/style.css'
 import {
   headingsPlugin,
+  linkPlugin,
   listsPlugin,
   markdownShortcutPlugin,
   MDXEditor,
   MDXEditorMethods,
   thematicBreakPlugin,
-} from '@mdxeditor/editor'
-import { forwardRef } from 'react'
+} from '@mdxeditor/editor';
+import '@mdxeditor/editor/style.css';
+import { forwardRef } from 'react';
 
 interface SimpleMarkdownEditorProps {
   initialMarkdown: string;
   onChange?: (markdown: string) => void;
-  onCreateNote?: () => void;
 }
 
 const SimpleMarkdownEditor = forwardRef<MDXEditorMethods, SimpleMarkdownEditorProps>(({ initialMarkdown, onChange }, ref) => {
@@ -21,8 +21,9 @@ const SimpleMarkdownEditor = forwardRef<MDXEditorMethods, SimpleMarkdownEditorPr
         placeholder="Start typing..."
         markdown={initialMarkdown}
         ref={ref}
-        plugins={[headingsPlugin(), listsPlugin(), markdownShortcutPlugin(), thematicBreakPlugin()]}
+        plugins={[headingsPlugin(), listsPlugin(), markdownShortcutPlugin(), thematicBreakPlugin(), linkPlugin()]}
         onChange={onChange}
+        className="dark-theme dark-editor"
       />
   )
 });

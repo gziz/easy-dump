@@ -1,7 +1,8 @@
+import { useNotes } from '@renderer/utils/NoteContext'
+import NoteForm from '@renderer/utils/NoteForm'
+import { useMarkdownEditor } from '@renderer/utils/useMarkdownEditor'
+import { message } from 'antd'
 import { useMemo, useState } from 'react'
-import { useNotes } from '../context/NoteContext'
-import { useMarkdownEditor } from '../home/useMarkdownEditor'
-import NoteForm from '@renderer/home/NoteForm'
 
 const QuickNoteContainer = () => {
   const [newNoteTags, setNewNoteTags] = useState<string[]>([])
@@ -16,6 +17,7 @@ const QuickNoteContainer = () => {
       createNote(content, newNoteTags)
       handleClear()
       setNewNoteTags([])
+      message.success('Note created successfully')
     }
   }
 

@@ -1,12 +1,10 @@
-// import { saveDatabase } from 'src/main/database'
-import { Note } from '../home/types'
+import { Note } from './types'
 
 export const createNote = async (
   notes: Note[],
   noteContent: string,
   selectedTags: string[]
 ): Promise<Note[]> => {
-
   const newNote: Note = {
     id: generateUniqueId(),
     content: noteContent,
@@ -16,7 +14,7 @@ export const createNote = async (
   }
 
   // Insert the note into the database
-  window.electronAPI.runQuery(
+  window.context.runQuery(
     `INSERT INTO notes (id, content, tags, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)`,
     [
       newNote.id,
@@ -36,12 +34,13 @@ export const editNote = async (
   updatedContent: string,
   updatedTags: string[]
 ): Promise<Note[]> => {
-
   // Update the note in the database
-  window.electronAPI.runQuery(
-    `UPDATE notes SET content = ?, tags = ?, updatedAt = ? WHERE id = ?`,
-    [updatedContent, JSON.stringify(updatedTags), new Date().toISOString(), noteId]
-  )
+  window.context.runQuery(`UPDATE notes SET content = ?, tags = ?, updatedAt = ? WHERE id = ?`, [
+    updatedContent,
+    JSON.stringify(updatedTags),
+    new Date().toISOString(),
+    noteId
+  ])
 
   return notes.map((note) =>
     note.id === noteId
@@ -51,12 +50,12 @@ export const editNote = async (
 }
 
 export const deleteNote = async (notes: Note[], noteId: string): Promise<Note[]> => {
-  window.electronAPI.runQuery(`DELETE FROM notes WHERE id = ?`, [noteId])
+  window.context.runQuery(`DELETE FROM notes WHERE id = ?`, [noteId])
   return notes.filter((note) => note.id !== noteId)
 }
 
 export const getNotes = async (): Promise<Note[]> => {
-  const queryResult = await window.electronAPI.runQuery(`SELECT * FROM notes`)
+  const queryResult = await window.context.runQuery(`SELECT * FROM notes`)
   const results = queryResult[0]
   const notes: Note[] = results.values.map((row) => {
     return {
@@ -69,9 +68,9 @@ export const getNotes = async (): Promise<Note[]> => {
     }
   })
 
-  return notes;
+  return notes
 }
 
-const generateUniqueId = () =>{
+const generateUniqueId = () => {
   return '_' + Math.random().toString(36).slice(2, 9)
 }

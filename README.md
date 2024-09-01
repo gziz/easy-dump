@@ -1,4 +1,4 @@
-# mynotemark-2
+# Easy Dump
 
 An Electron application with React and TypeScript
 

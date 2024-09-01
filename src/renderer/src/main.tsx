@@ -1,38 +1,35 @@
+import { ConfigProvider, theme } from 'antd'
 import ReactDOM from 'react-dom/client'
+import { createHashRouter, RouterProvider } from 'react-router-dom'
 import App from './App'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import QuickNote from './quickNote';
-import Home from './home';
-import Board from './board';
-import './main.css';
-import Editor from './editor';
-const router = createBrowserRouter([
+import Board from './board'
+import Home from './home'
+import './main.css'
+import QuickNote from './quickNote'
+const { darkAlgorithm } = theme
+const router = createHashRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     children: [
       {
-        path: "/",
-        element: <Home />,
+        path: '/',
+        element: <Home />
       },
       {
-        path: "quick-note",
-        element: <QuickNote />,
+        path: 'quick-note',
+        element: <QuickNote />
       },
       {
-        path: "board",
-        element: <Board />,
-      },
-      {
-        path: "editor",
-        element: <Editor />,
+        path: 'board',
+        element: <Board />
       }
-    ],
-  },
-]);
+    ]
+  }
+])
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  // <React.StrictMode>
+  <ConfigProvider theme={{ algorithm: [darkAlgorithm] }}>
     <RouterProvider router={router} />
-  // </React.StrictMode>
+  </ConfigProvider>
 )

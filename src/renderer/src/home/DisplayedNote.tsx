@@ -1,15 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Tag, Dropdown, message, Select } from 'antd'
-import { useMarkdownEditor } from './useMarkdownEditor'
-import { useNotes } from '../context/NoteContext'
-import SimpleMarkdownEditor from './SimpleMarkdownEditor'
-import { Note } from './types'
+import { Dropdown, message, Select, Tag } from 'antd'
+import React, { useEffect, useRef, useState } from 'react'
+import { useNotes } from '../utils/NoteContext'
+import SimpleMarkdownEditor from '../utils/SimpleMarkdownEditor'
+import { Note } from '../utils/types'
+import { useMarkdownEditor } from '../utils/useMarkdownEditor'
 
 const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: string }[] }> = ({
   note,
   allTagsFormatted
 }) => {
   const [editedNote, setEditedNote] = useState(note.content)
+  const initialNoteContent = useRef(note.content)
   const [newTags, setNewTags] = useState<string[]>(note.tags)
   const [showSelect, setShowSelect] = useState(false)
   const { editorRef } = useMarkdownEditor()
@@ -20,12 +21,12 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   const containerStyle = {
     padding: '0px 4px 16px 4px',
     marginBottom: '8px',
-    backgroundColor: '#fff',
+    backgroundColor: '#141414',
     boxShadow: '0 4px 4px rgba(0, 0, 0, 0.1)'
   }
 
   const tagContainerStyle = {
-    marginTop: '8px',
+    marginTop: '0px',
     marginLeft: '12px'
   }
 
@@ -34,7 +35,8 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   }
 
   const handleChange = () => {
-    setEditedNote(editorRef.current?.getMarkdown() || '')
+    const newContent = editorRef.current?.getMarkdown() || ''
+    setEditedNote(newContent)
 
     if (editTimeoutRef.current !== null) {
       clearTimeout(editTimeoutRef.current)
@@ -45,6 +47,13 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
     }, 1000)
   }
 
+  const handleBlur = () => {
+    if (editedNote !== initialNoteContent.current) {
+      savedEditedNote()
+      message.success('Note updated successfully')
+    }
+  }
+
   const handleDeleteNote = () => {
     deleteNote(note.id)
     message.success('Note deleted successfully')
@@ -53,7 +62,7 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   const handleUpdateTags = () => {
     savedEditedNote()
     message.success('Tags updated successfully')
-    setShowSelect(false) // Hide Select after updating tags
+    setShowSelect(false)
   }
 
   const items = [
@@ -86,12 +95,8 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   }
 
   useEffect(() => {
-    return () => {
-      if (editTimeoutRef.current !== null) {
-        clearTimeout(editTimeoutRef.current)
-        savedEditedNote()
-      }
-    }
+    setEditedNote(note.content)
+    initialNoteContent.current = note.content
   }, [note])
 
   return (
@@ -102,6 +107,7 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
             ref={editorRef}
             initialMarkdown={editedNote}
             onChange={handleChange}
+            onBlur={handleBlur}
           />
         </div>
         <div style={tagContainerStyle}>

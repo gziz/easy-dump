@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { Card, Select } from 'antd'
-import { useNotes } from '../context/NoteContext'
+import { useNotes } from '../utils/NoteContext'
 import NoteCard from './Card'
 
 const BoardContainer = () => {

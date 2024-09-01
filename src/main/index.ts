@@ -1,19 +1,16 @@
-import { app, shell, BrowserWindow, ipcMain, globalShortcut } from 'electron'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { loadDatabase, saveDatabase } from './database'
-import { Database } from 'sqlite3'
 
+let db: any;
 
-let db: Database;
-
-async function createWindow(): Promise<BrowserWindow> {
-  db = await loadDatabase();
-
-  const mainWindow = new BrowserWindow({  
-    width: 1000,
-    height: 800,
+async function createWindow(isQuickNote?: boolean): Promise<BrowserWindow> {
+  const dimensions = isQuickNote ? { width: 800, height: 500 } : { width: 1000, height: 800 }
+  const mainWindow = new BrowserWindow({
+    width: dimensions.width,
+    height: dimensions.height,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -23,7 +20,8 @@ async function createWindow(): Promise<BrowserWindow> {
       contextIsolation: true
     }
   })
-
+  db = await loadDatabase()
+  
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
@@ -38,7 +36,7 @@ async function createWindow(): Promise<BrowserWindow> {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
-  return mainWindow;
+  return mainWindow
 }
 
 app.whenReady().then(async () => {
@@ -51,21 +49,16 @@ app.whenReady().then(async () => {
 
   await createWindow()
 
-
-  globalShortcut.register("CmdOrCtrl+Shift+D", async () => {
-    console.log("shortcut pressed!")
-    const window = BrowserWindow.getAllWindows()[0];
+  globalShortcut.register('CmdOrCtrl+Shift+D', async () => {
+    const window = BrowserWindow.getAllWindows()[0]
     if (!window) {
-      console.log("no window found!")
-      const newWindow = await createWindow();
+      const newWindow = await createWindow(true)
       newWindow.on('ready-to-show', () => {
-        console.log("ready to show window!")
-        newWindow.webContents.send('quick-note');
+        newWindow.webContents.send('quick-note')
       })
     } else {
-      console.log("window found!")
       window.webContents.send('quick-note')
-      window.show();
+      window.show()
     }
   })
 
@@ -82,28 +75,27 @@ app.on('window-all-closed', () => {
 
 ipcMain.handle('db-run-query', async (_, query: string, params: any[]) => {
   if (!db) {
-    db = await loadDatabase();
+    db = await loadDatabase()
   }
 
   try {
     if (query.trim().toUpperCase().startsWith('SELECT')) {
-      const result = db.exec(query);
-      return result; // Return the query results
+      const result = db.exec(query)
+      return result
     } else {
-      db.run(query, params);
+      db.run(query, params)
       await saveDatabase(db)
 
-      return [];
+      return []
     }
   } catch (error) {
-    console.error('Database query error:', error);
-    throw error;
+    console.error('Database query error:', error)
+    throw error
   }
-});
-
+})
 
 ipcMain.handle('db-save', async () => {
   if (db) {
-    saveDatabase(db);
+    saveDatabase(db)
   }
-});
+})

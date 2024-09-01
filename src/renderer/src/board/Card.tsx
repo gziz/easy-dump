@@ -11,7 +11,7 @@ interface NoteCardProps {
   deleteNote: (id: string) => void;
 }
 
-const NoteCard: React.FC<NoteCardProps> = ({ note, index, deleteNote }) => {
+const NoteCard: React.FC<NoteCardProps> = ({ note, index }) => {
   return (
     <Draggable key={note.id} draggableId={note.id} index={index}>
       {(provided, snapshot) => (
