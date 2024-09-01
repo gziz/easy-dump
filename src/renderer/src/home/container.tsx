@@ -1,8 +1,8 @@
-import { Card, Divider, Tag, Calendar, Input } from 'antd'
-import { useMemo, useState, useEffect } from 'react'
+import { Calendar, Card, Divider, Input, Tag } from 'antd'
+import dayjs from 'dayjs'
+import { useEffect, useMemo, useState } from 'react'
 import { useNotes } from '../utils/NoteContext'
 import { useMarkdownEditor } from '../utils/useMarkdownEditor'
-import dayjs from 'dayjs'
 
 import NewNote from '../utils/NoteForm'
 import DisplayedNote from './DisplayedNote'
@@ -22,7 +22,7 @@ const HomeContainer = () => {
 
   useEffect(() => {
     const checkWidth = () => {
-      setShowCalendar(window.innerWidth > 1200) // Adjust this breakpoint as needed
+      setShowCalendar(window.innerWidth > 1200)
     }
 
     checkWidth() // Check on initial render
@@ -100,13 +100,11 @@ const HomeContainer = () => {
             ))}
           </div>
         </Card>
-        {/* <div style={{ marginLeft: 10 }}> */}
         {showCalendar && (
           <Card title="Calendar" style={{ marginBottom: 24, padding: 0 }}>
             <Calendar fullscreen={false} onSelect={onDateSelect} style={{ maxWidth: '100%' }} />
           </Card>
         )}
-        {/* </div> */}
       </div>
     </div>
   )

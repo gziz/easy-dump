@@ -107,7 +107,6 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
             ref={editorRef}
             initialMarkdown={editedNote}
             onChange={handleChange}
-            onBlur={handleBlur}
           />
         </div>
         <div style={tagContainerStyle}>

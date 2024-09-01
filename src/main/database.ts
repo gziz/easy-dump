@@ -1,22 +1,20 @@
-import initSqlJs, { Database } from 'sql.js';
-import fs from 'fs';
-// import path from 'path';
+import { app } from 'electron'
+import fs from 'fs'
+import path from 'path'
+import initSqlJs, { Database } from 'sql.js'
 
-// const dbPath = path.join(__dirname, 'notes.sqlite');
-const dbPath = './notes.sqlite';
+const dbPath = path.join(app.getPath('userData'), 'notes.sqlite')
 
-
-// Load the database from a file or create a new one
 const loadDatabase = async (): Promise<Database> => {
-  const SQL = await initSqlJs();
-  let db;
+  const SQL = await initSqlJs()
+  let db
 
   if (fs.existsSync(dbPath)) {
     // Load existing database
-    const fileBuffer = fs.readFileSync(dbPath);
-    db = new SQL.Database(fileBuffer);
+    const fileBuffer = fs.readFileSync(dbPath)
+    db = new SQL.Database(fileBuffer)
   } else {
-    db = new SQL.Database();
+    db = new SQL.Database()
     db.run(`
       CREATE TABLE notes (
         id TEXT PRIMARY KEY,
@@ -26,17 +24,17 @@ const loadDatabase = async (): Promise<Database> => {
         createdAt TEXT,
         updatedAt TEXT
       );
-    `);
-    saveDatabase(db);
+    `)
+    saveDatabase(db)
   }
 
-  return db;
-};
+  return db
+}
 
 const saveDatabase = (db: Database) => {
-  const data = db.export();
-  const buffer = Buffer.from(data);
-  fs.writeFileSync(dbPath, buffer);
-};
+  const data = db.export()
+  const buffer = Buffer.from(data)
+  fs.writeFileSync(dbPath, buffer)
+}
 
-export { loadDatabase, saveDatabase };
+export { loadDatabase, saveDatabase }
