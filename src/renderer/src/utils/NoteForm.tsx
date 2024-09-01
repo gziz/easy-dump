@@ -5,6 +5,7 @@ import { KeyboardEvent, useCallback, useEffect, useState } from 'react'
 import SimpleMarkdownEditor from './SimpleMarkdownEditor'
 import TagSelector from './TagSelector'
 import TagSelectorModal from './TagSelectorModal'
+import { handleKeyDownForForm as baseHandleKeyDownForForm } from './utils'
 
 interface NoteFormProps {
   editorRef: React.RefObject<MDXEditorMethods> // Adjust type as necessary
@@ -47,31 +48,20 @@ const NoteForm: React.FC<NoteFormProps> = ({
   }
   
   const handleKeyDownForForm = useCallback(
-    (event: KeyboardEvent<HTMLDivElement>) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-        event.preventDefault()
-        handleCreateNoteWithTagCheck()
-      }
-    },
-    [handleCreateNoteWithTagCheck]
+    (event: KeyboardEvent<HTMLDivElement>) => 
+      baseHandleKeyDownForForm(event, handleCreateNoteWithTagCheck),
+    [baseHandleKeyDownForForm, handleCreateNoteWithTagCheck]
   )
 
-
   const handleKeyDownForModal = useCallback(
-    (event: KeyboardEvent<HTMLDivElement>) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-        event.preventDefault()
-        closeModalAndCreateNote()
-      }
-    },
-    [closeModalAndCreateNote, setShowNoTagsModal]
+    (event: KeyboardEvent<HTMLDivElement>) => 
+      baseHandleKeyDownForForm(event, closeModalAndCreateNote),
+    [baseHandleKeyDownForForm, closeModalAndCreateNote]
   )
 
   const openModal = () => {
     setShowNoTagsModal(true)
   }
-
-
 
   useEffect(() => {
     if (editorRef.current && isQuickNote) {
@@ -102,6 +92,7 @@ const NoteForm: React.FC<NoteFormProps> = ({
             allTags={allTags}
             selectedTags={newNoteTags}
             setSelectedTags={setNewNoteTags}
+            isBorderless={true}
           />
         </div>
         <Button

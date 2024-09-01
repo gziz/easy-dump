@@ -1,9 +1,11 @@
-import { Dropdown, message, Select, Tag } from 'antd'
-import React, { useEffect, useRef, useState } from 'react'
+import { Dropdown, message, Tag } from 'antd'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { useNotes } from '../utils/NoteContext'
 import SimpleMarkdownEditor from '../utils/SimpleMarkdownEditor'
 import { Note } from '../utils/types'
 import { useMarkdownEditor } from '../utils/useMarkdownEditor'
+import { handleKeyDownForForm } from '@renderer/utils/utils'
+import TagSelector from '@renderer/utils/TagSelector'
 
 const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: string }[] }> = ({
   note,
@@ -14,7 +16,6 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   const [newTags, setNewTags] = useState<string[]>(note.tags)
   const [showSelect, setShowSelect] = useState(false)
   const { editorRef } = useMarkdownEditor()
-  const editTimeoutRef = useRef<number | null>(null)
   const { editNote, deleteNote } = useNotes()
   const [selectPosition, setSelectPosition] = useState<{ x: number; y: number } | null>(null)
 
@@ -30,26 +31,22 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
     marginLeft: '12px'
   }
 
-  const savedEditedNote = () => {
-    editNote(note.id, editedNote, newTags)
-  }
+  const saveEditedNote = useCallback(() => {
+    if (editedNote !== initialNoteContent.current) {
+      editNote(note.id, editedNote, newTags)
+      initialNoteContent.current = editedNote
+      return true
+    }
+    return false
+  }, [editedNote, newTags, note.id, editNote])
 
   const handleChange = () => {
     const newContent = editorRef.current?.getMarkdown() || ''
     setEditedNote(newContent)
-
-    if (editTimeoutRef.current !== null) {
-      clearTimeout(editTimeoutRef.current)
-    }
-
-    editTimeoutRef.current = window.setTimeout(() => {
-      savedEditedNote()
-    }, 1000)
   }
 
   const handleBlur = () => {
-    if (editedNote !== initialNoteContent.current) {
-      savedEditedNote()
+    if (saveEditedNote()) {
       message.success('Note updated successfully')
     }
   }
@@ -60,7 +57,7 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   }
 
   const handleUpdateTags = () => {
-    savedEditedNote()
+    saveEditedNote()
     message.success('Tags updated successfully')
     setShowSelect(false)
   }
@@ -72,7 +69,7 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
     },
     {
       key: 'update-tags',
-      label: <span onClick={() => setShowSelect(true)}>Update Tags</span> // Show Select on click
+      label: <span onClick={() => setShowSelect(true)}>Update Tags</span>
     }
   ]
 
@@ -95,14 +92,31 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   }
 
   useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (editedNote !== initialNoteContent.current) {
+        saveEditedNote()
+        event.preventDefault()
+        // event.returnValue = ''
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [editedNote, saveEditedNote])
+
+  useEffect(() => {
     setEditedNote(note.content)
     initialNoteContent.current = note.content
+    setNewTags(note.tags)
   }, [note])
 
   return (
     <Dropdown menu={menuProps} trigger={['contextMenu']}>
       <div style={containerStyle} onContextMenu={(e) => e.preventDefault()}>
-        <div style={{ maxHeight: '50vh', overflow: 'auto' }}>
+        <div style={{ maxHeight: '50vh', overflow: 'auto' }} onBlur={handleBlur} onKeyDown={(event) => handleKeyDownForForm(event, handleBlur)}>
           <SimpleMarkdownEditor
             ref={editorRef}
             initialMarkdown={editedNote}
@@ -126,17 +140,13 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
               minWidth: '200px'
             }}
           >
-            <Select
-              mode="tags"
-              options={allTagsFormatted}
-              style={{
-                width: '100%',
-                marginTop: '8px'
-              }}
-              onChange={setNewTags}
-              value={newTags}
-              placeholder="Select your tags..."
+            <TagSelector
+              allTags={allTagsFormatted}
+              selectedTags={newTags}
+              setSelectedTags={setNewTags}
               onBlur={handleUpdateTags}
+              autoFocus={true}
+              onKeyDown={(event) => handleKeyDownForForm(event, handleUpdateTags)}
             />
           </div>
         )}

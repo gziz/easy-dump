@@ -1,16 +1,24 @@
-import { Select, RefSelectProps } from 'antd'
-import React, { useRef, useEffect, useState } from 'react'
+import { Select } from 'antd'
+import React, { useState } from 'react'
 
 interface TagSelectorProps {
   allTags: { value: string; label: string }[]
   selectedTags: string[]
   setSelectedTags: (tags: string[]) => void
+  onBlur?: () => void
+  autoFocus?: boolean
+  onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
+  isBorderless?: boolean
 }
 
 const TagSelector: React.FC<TagSelectorProps> = ({
   allTags,
   selectedTags,
   setSelectedTags,
+  onBlur,
+  onKeyDown,
+  autoFocus = false,
+  isBorderless = false
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   
@@ -29,10 +37,15 @@ const TagSelector: React.FC<TagSelectorProps> = ({
         backgroundColor: '#141414',
         margin: 0
       }}
-      variant="borderless"
+      variant={isBorderless ? 'borderless' : undefined}
       onChange={handleSelectChange}
       value={selectedTags}
       placeholder="Select your tags..."
+      open={isDropdownOpen}
+      onDropdownVisibleChange={(visible) => setIsDropdownOpen(visible)}
+      onBlur={onBlur}
+      autoFocus={autoFocus}
+      onKeyDown={onKeyDown}
     />
   )
 }
