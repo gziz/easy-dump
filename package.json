@@ -1,10 +1,10 @@
 {
-  "name": "easy-dump",
+  "name": "easydump",
   "version": "1.0.0",
   "description": "A simple and quick brain dump mac os application",
   "main": "./out/main/index.js",
-  "author": "gerardomz.com",
-  "homepage": "https://tobediscovered.com",
+  "author": "https://gerardomz.com",
+  "homepage": "https://easydump.vercel.app/",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
@@ -18,6 +18,7 @@
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
+    "build:mac-universal": "electron-vite build && electron-builder --mac --universal",
     "build:linux": "electron-vite build && electron-builder --linux"
   },
   "dependencies": {

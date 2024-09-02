@@ -1,8 +1,8 @@
+import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
+import { useNotes } from '@renderer/store/NoteContext'
 import { Calendar, Card, Divider, Input, Tag } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
-import { useNotes } from '@renderer/store/NoteContext'
-import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
 
 import NewNote from '@renderer/components/NoteForm'
 import DisplayedNote from './DisplayedNote'
@@ -64,7 +64,7 @@ const HomeContainer = () => {
 
   return (
     <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-      <div style={{ width: '70%' }}>
+      <div style={{ width: '70%', overflowY: 'auto', maxHeight: 'calc(100vh - 50px)' }}>
         <NewNote
           editorRef={editorRef}
           allTags={allTagsFormatted}
@@ -72,11 +72,9 @@ const HomeContainer = () => {
           setNewNoteTags={setNewNoteTags}
           handleCreateNote={handleCreateNote}
         />
-        <div style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 180px)' }}>
-          {filteredNotes.toReversed().map((note) => (
-            <DisplayedNote key={note.id} note={note} allTagsFormatted={allTagsFormatted} />
-          ))}
-        </div>
+        {filteredNotes.toReversed().map((note) => (
+          <DisplayedNote key={note.id} note={note} allTagsFormatted={allTagsFormatted} />
+        ))}
       </div>
       <Divider type="vertical" style={{ height: '100%' }} />
       <div style={{ width: '25%' }}>

@@ -1,11 +1,11 @@
-import { Dropdown, message, Tag } from 'antd'
-import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { useNotes } from '@renderer/store/NoteContext'
 import SimpleMarkdownEditor from '@renderer/components/SimpleMarkdownEditor'
-import { Note } from '@renderer/shared/types'
-import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
-import { handleKeyDownForForm } from '@renderer/components/utils'
 import TagSelector from '@renderer/components/TagSelector'
+import { handleKeyDownForForm } from '@renderer/components/utils'
+import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
+import { Note } from '@renderer/shared/types'
+import { useNotes } from '@renderer/store/NoteContext'
+import { Dropdown, message, Tag } from 'antd'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: string }[] }> = ({
   note,
