@@ -2,9 +2,9 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
-import { loadDatabase, saveDatabase } from './database'
+import { loadDatabase, runQuery, saveDatabase } from './lib/database'
 
-let db: any;
+let db: any
 
 async function createWindow(isQuickNote?: boolean): Promise<BrowserWindow> {
   const dimensions = isQuickNote ? { width: 800, height: 500 } : { width: 1000, height: 800 }
@@ -21,7 +21,7 @@ async function createWindow(isQuickNote?: boolean): Promise<BrowserWindow> {
     }
   })
   db = await loadDatabase()
-  
+
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
@@ -77,25 +77,12 @@ ipcMain.handle('db-run-query', async (_, query: string, params: any[]) => {
   if (!db) {
     db = await loadDatabase()
   }
-
-  try {
-    if (query.trim().toUpperCase().startsWith('SELECT')) {
-      const result = db.exec(query)
-      return result
-    } else {
-      db.run(query, params)
-      await saveDatabase(db)
-
-      return []
-    }
-  } catch (error) {
-    console.error('Database query error:', error)
-    throw error
-  }
+  return runQuery(db, query, params)
 })
 
 ipcMain.handle('db-save', async () => {
-  if (db) {
-    saveDatabase(db)
+  if (!db) {
+    db = await loadDatabase()
   }
+  saveDatabase(db)
 })

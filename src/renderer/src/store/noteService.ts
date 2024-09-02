@@ -1,4 +1,4 @@
-import { Note } from './types'
+import { Note } from '@renderer/shared/types'
 
 export const createNote = async (
   notes: Note[],

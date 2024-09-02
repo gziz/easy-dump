@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { createNote, deleteNote, editNote, getNotes } from './noteService';
-import { Note } from './types';
+import { createNote, deleteNote, editNote, getNotes } from '@renderer/store/noteService';
+import { Note } from '@renderer/shared/types';
 
 type NoteContextType = {
   notes: Note[];

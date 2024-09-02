@@ -1,6 +1,6 @@
-import { useNotes } from '@renderer/utils/NoteContext'
-import NoteForm from '@renderer/utils/NoteForm'
-import { useMarkdownEditor } from '@renderer/utils/useMarkdownEditor'
+import { useNotes } from '@renderer/store/NoteContext'
+import NoteForm from '@renderer/components/NoteForm'
+import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
 import { message } from 'antd'
 import { useMemo, useState } from 'react'
 

@@ -1,11 +1,11 @@
 import { Dropdown, message, Tag } from 'antd'
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { useNotes } from '../utils/NoteContext'
-import SimpleMarkdownEditor from '../utils/SimpleMarkdownEditor'
-import { Note } from '../utils/types'
-import { useMarkdownEditor } from '../utils/useMarkdownEditor'
-import { handleKeyDownForForm } from '@renderer/utils/utils'
-import TagSelector from '@renderer/utils/TagSelector'
+import { useNotes } from '@renderer/store/NoteContext'
+import SimpleMarkdownEditor from '@renderer/components/SimpleMarkdownEditor'
+import { Note } from '@renderer/shared/types'
+import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
+import { handleKeyDownForForm } from '@renderer/components/utils'
+import TagSelector from '@renderer/components/TagSelector'
 
 const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: string }[] }> = ({
   note,
@@ -54,7 +54,7 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   }
 
   const handleBlur = () => {
-    if (saveEditedContent()) {
+    if (saveEditedContent() || saveEditedTags()) {
       message.success('Note updated successfully')
     }
   }

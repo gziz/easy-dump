@@ -1,4 +1,4 @@
-import { NoteProvider } from '../utils/NoteContext';
+import { NoteProvider } from '@renderer/store/NoteContext';
 import QuickNoteContainer from './container';
 
 const QuickNote = () => (

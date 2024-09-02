@@ -1,4 +1,4 @@
-import { NoteProvider } from '../utils/NoteContext';
+import { NoteProvider } from '@renderer/store/NoteContext';
 import BoardContainer from './container';
 
 const Board = () => (

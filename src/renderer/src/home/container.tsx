@@ -1,10 +1,10 @@
 import { Calendar, Card, Divider, Input, Tag } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
-import { useNotes } from '../utils/NoteContext'
-import { useMarkdownEditor } from '../utils/useMarkdownEditor'
+import { useNotes } from '@renderer/store/NoteContext'
+import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
 
-import NewNote from '../utils/NoteForm'
+import NewNote from '@renderer/components/NoteForm'
 import DisplayedNote from './DisplayedNote'
 
 const { Search } = Input
@@ -25,7 +25,7 @@ const HomeContainer = () => {
       setShowCalendar(window.innerWidth > 1200)
     }
 
-    checkWidth() // Check on initial render
+    checkWidth()
     window.addEventListener('resize', checkWidth)
     return () => window.removeEventListener('resize', checkWidth)
   }, [])

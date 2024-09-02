@@ -5,7 +5,7 @@ import initSqlJs, { Database } from 'sql.js'
 
 const dbPath = path.join(app.getPath('userData'), 'notes.sqlite')
 
-const loadDatabase = async (): Promise<Database> => {
+export const loadDatabase = async (): Promise<Database> => {
   const SQL = await initSqlJs()
   let db
 
@@ -31,10 +31,24 @@ const loadDatabase = async (): Promise<Database> => {
   return db
 }
 
-const saveDatabase = (db: Database) => {
+export const saveDatabase = (db: Database) => {
   const data = db.export()
   const buffer = Buffer.from(data)
   fs.writeFileSync(dbPath, buffer)
 }
 
-export { loadDatabase, saveDatabase }
+export const runQuery = async (db: Database, query: string, params: any[]) => {
+  try {
+    if (query.trim().toUpperCase().startsWith('SELECT')) {
+      const result = db.exec(query)
+      return result
+    } else {
+      db.run(query, params)
+      saveDatabase(db)
+      return []
+    }
+  } catch (error) {
+    console.error('Database query error:', error)
+    throw error
+  }
+}
