@@ -12,7 +12,7 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   allTagsFormatted
 }) => {
   const [editedNote, setEditedNote] = useState(note.content)
-  const initialNoteContent = useRef(note.content)
+  const previousNoteContent = useRef(note.content)
   const [newTags, setNewTags] = useState<string[]>(note.tags)
   const [showSelect, setShowSelect] = useState(false)
   const { editorRef } = useMarkdownEditor()
@@ -31,10 +31,18 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
     marginLeft: '12px'
   }
 
-  const saveEditedNote = useCallback(() => {
-    if (editedNote !== initialNoteContent.current) {
+  const saveEditedContent = useCallback(() => {
+    if (editedNote !== previousNoteContent.current) {
       editNote(note.id, editedNote, newTags)
-      initialNoteContent.current = editedNote
+      previousNoteContent.current = editedNote
+      return true
+    }
+    return false
+  }, [editedNote, newTags, note.id, editNote])
+
+  const saveEditedTags = useCallback(() => {
+    if (newTags !== note.tags) {
+      editNote(note.id, editedNote, newTags)
       return true
     }
     return false
@@ -46,7 +54,7 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   }
 
   const handleBlur = () => {
-    if (saveEditedNote()) {
+    if (saveEditedContent()) {
       message.success('Note updated successfully')
     }
   }
@@ -57,8 +65,9 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
   }
 
   const handleUpdateTags = () => {
-    saveEditedNote()
-    message.success('Tags updated successfully')
+    if (saveEditedTags()) {
+      message.success('Tags updated successfully')
+    }
     setShowSelect(false)
   }
 
@@ -93,10 +102,10 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (editedNote !== initialNoteContent.current) {
-        saveEditedNote()
+      if (editedNote !== previousNoteContent.current) {
+        saveEditedContent()
+        saveEditedTags()
         event.preventDefault()
-        // event.returnValue = ''
       }
     }
 
@@ -105,12 +114,12 @@ const NoteBox: React.FC<{ note: Note; allTagsFormatted: { value: string; label: 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload)
     }
-  }, [editedNote, saveEditedNote])
+  }, [editedNote, saveEditedContent, saveEditedTags])
 
   useEffect(() => {
     setEditedNote(note.content)
-    initialNoteContent.current = note.content
     setNewTags(note.tags)
+    previousNoteContent.current = note.content
   }, [note])
 
   return (
