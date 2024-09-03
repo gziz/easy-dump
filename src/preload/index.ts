@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron')
+import { contextBridge, ipcRenderer } from 'electron'
 
 if (!process.contextIsolated) {
   throw new Error('contextIsolation must be enabled in the BrowserWindow')
@@ -10,8 +10,9 @@ try {
       ipcRenderer.invoke('db-run-query', query, params),
     saveDatabase: (): Promise<void> => ipcRenderer.invoke('db-save'),
     onQuickNote: (callback) => ipcRenderer.on('quick-note', (_event, value) => callback(value)),
-    onUpdateCounter: (callback) =>
-      ipcRenderer.on('update-counter', (_event, value) => callback(value))
+    setQuickNoteShortcut: (shortcut: string) => ipcRenderer.invoke('set-quick-note-shortcut', shortcut),
+    getSettings: () => ipcRenderer.invoke('get-settings'),
+    setSettings: (settings: any) => ipcRenderer.invoke('set-settings', settings)
   })
 
   contextBridge.exposeInMainWorld('process', {

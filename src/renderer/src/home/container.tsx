@@ -1,22 +1,19 @@
-import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
 import { useNotes } from '@renderer/store/NoteContext'
 import { Calendar, Card, Divider, Input, Tag } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 
-import NewNote from '@renderer/components/NoteForm'
+import NoteForm from '@renderer/components/NoteForm'
 import DisplayedNote from './DisplayedNote'
 
 const { Search } = Input
 
 const HomeContainer = () => {
-  const [newNoteTags, setNewNoteTags] = useState<string[]>([])
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null)
   const [showCalendar, setShowCalendar] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const { editorRef, handleClear } = useMarkdownEditor()
-  const { notes, createNote, tags } = useNotes()
+  const { notes, tags } = useNotes()
 
   const allTagsFormatted = useMemo(() => tags.map((tag) => ({ value: tag, label: tag })), [tags])
 
@@ -29,15 +26,6 @@ const HomeContainer = () => {
     window.addEventListener('resize', checkWidth)
     return () => window.removeEventListener('resize', checkWidth)
   }, [])
-
-  const handleCreateNote = () => {
-    let content = editorRef.current?.getMarkdown()
-    if (content && content !== '') {
-      createNote(content, newNoteTags)
-      handleClear()
-      setNewNoteTags([])
-    }
-  }
 
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
@@ -65,13 +53,7 @@ const HomeContainer = () => {
   return (
     <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ width: '70%', overflowY: 'auto', maxHeight: 'calc(100vh - 50px)' }}>
-        <NewNote
-          editorRef={editorRef}
-          allTags={allTagsFormatted}
-          newNoteTags={newNoteTags}
-          setNewNoteTags={setNewNoteTags}
-          handleCreateNote={handleCreateNote}
-        />
+        <NoteForm allTags={allTagsFormatted} />
         {filteredNotes.toReversed().map((note) => (
           <DisplayedNote key={note.id} note={note} allTagsFormatted={allTagsFormatted} />
         ))}

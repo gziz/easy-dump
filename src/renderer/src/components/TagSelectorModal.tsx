@@ -48,6 +48,7 @@ const TagSelectorModal: React.FC<TagSelectorProps> = ({
       autoFocus={true}
       open={isDropdownOpen}
       onDropdownVisibleChange={(open) => setIsDropdownOpen(open)}
+      suffixIcon={null}  // This removes the dropdown icon
     />
   )
 }

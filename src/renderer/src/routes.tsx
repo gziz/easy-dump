@@ -3,6 +3,7 @@ import App from './App'
 import Home from './home'
 import QuickNote from './quickNote'
 import Board from './board'
+import Settings from './views/settings'
 
 export const routes: RouteObject[] = [
   {
@@ -20,6 +21,10 @@ export const routes: RouteObject[] = [
       {
         path: 'board',
         element: <Board />
+      },
+      {
+        path: 'settings',
+        element: <Settings />
       }
     ]
   }
