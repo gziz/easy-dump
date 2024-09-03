@@ -1,6 +1,6 @@
 import { HomeOutlined, SettingOutlined } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { DraggableTopBar } from './components/DraggableTopBar'
 
@@ -9,13 +9,6 @@ const { Sider, Content } = Layout
 const App = () => {
   const navigate = useNavigate()
   const [selectedKey, setSelectedKey] = useState('1')
-
-  useEffect(() => {
-    window.context.onQuickNote(() => {
-      navigate('/quick-note')
-      setSelectedKey('2')
-    })
-  }, [navigate])
 
   const SideMenu = () => (
     <Sider width={60}>

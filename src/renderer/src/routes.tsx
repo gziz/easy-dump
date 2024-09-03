@@ -1,7 +1,6 @@
 import { RouteObject } from 'react-router-dom'
 import App from './App'
 import Home from './home'
-import QuickNote from './quickNote'
 import Board from './board'
 import Settings from './views/settings'
 
@@ -13,10 +12,6 @@ export const routes: RouteObject[] = [
       {
         index: true,
         element: <Home />
-      },
-      {
-        path: 'quick-note',
-        element: <QuickNote />
       },
       {
         path: 'board',

@@ -7,6 +7,7 @@ import TagSelectorModal from './TagSelectorModal'
 import { handleKeyDownForForm as baseHandleKeyDownForForm } from './utils'
 import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
 import { useNotes } from '@renderer/store/NoteContext'
+import { useRef } from 'react'
 
 interface NoteFormProps {
   allTags: { value: string; label: string }[]
@@ -19,6 +20,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ allTags }) => {
   const { editorRef, handleClear } = useMarkdownEditor()
   const [newNoteTags, setNewNoteTags] = useState<string[]>([])
   const { createNote } = useNotes()
+  const focusTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     window.context.getSettings().then(settings => {
@@ -78,9 +80,16 @@ const NoteForm: React.FC<NoteFormProps> = ({ allTags }) => {
   }, [])
 
   useEffect(() => {
-    if (editorRef.current) {
-      console.log("focusing editor")
-      editorRef.current.focus()
+    focusTimeoutRef.current = setTimeout(() => {
+      if (editorRef.current) {
+        editorRef.current.focus()
+      }
+    }, 0)
+
+    return () => {
+      if (focusTimeoutRef.current) {
+        clearTimeout(focusTimeoutRef.current)
+      }
     }
   }, [editorRef])
 
